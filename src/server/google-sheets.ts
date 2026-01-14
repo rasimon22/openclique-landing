@@ -5,11 +5,12 @@ export async function initializeDatabase() {
     await sql`
       CREATE TABLE IF NOT EXISTS subscribers (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(255),
+        name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    console.log("Database initialized");
   } catch (error) {
     console.error("Error initializing database:", error);
     throw error;
@@ -22,7 +23,7 @@ export async function addSubscriber(name: string, email: string) {
       INSERT INTO subscribers (name, email)
       VALUES (${name}, ${email})
       ON CONFLICT (email) DO NOTHING
-      RETURNING id, email, created_at
+      RETURNING id, name, email, created_at
     `;
     return result.rows[0];
   } catch (error) {
@@ -40,4 +41,6 @@ export async function getSubscribers() {
     throw error;
   }
 }
+
+
 
